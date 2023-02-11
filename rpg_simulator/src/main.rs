@@ -10,21 +10,23 @@ struct Armor (String, i8 );
 struct Weapon (String, i8 );
 struct Ring (String, i8, i8 );
 
-//Inventory struct and implementation block
-pub struct Inventory {Armors: Vec<Armor>, Weapons: Vec<Weapon>, Rings: Vec<Ring>}
+pub enum Item {
+    Armor,
+    Weapon,
+    Ring
+}
+
+pub struct Inventory {
+    items: Vec<Item>
+}
 
 impl Inventory {
-    pub fn add(&mut self, purchased_item: Armor) {
-        self.Armors.push(Armor)
+    pub fn add(&mut self, purchased_item: Item) {
+        self.items.push(purchased_item);
     }
-    pub fn add(&mut self, purchased_item: Weapon) {
-        self.Weapons.push(Weapon)
-    }
-    pub fn add(&mut self, purchased_item: Ring) {
-        self.Rings.push(Ring)
-    }
-    
 }
+
+
 
 //Player has an inventory element instead of inheriting Inventory
 pub struct Player {
@@ -35,12 +37,13 @@ pub struct Player {
 }
     
 impl Player {
-    fn new() {
+    fn new() -> Player {
         Player {
             hp: 10, dmg: 0, arm: 0,
-            player_inventory: Inventory { Armors: Vec::new(), Weapons: Vec::new(), Rings: Vec::new()}
+            player_inventory: Inventory {items: Vec::new()}
         }
     }
+}
 
 
     //fn recalculate_stats(&mut self.player_inventory) {
@@ -49,7 +52,7 @@ impl Player {
     //
     //    }
     //}
-}
+
     
 //functions
 
@@ -77,15 +80,19 @@ fn battle_sim(mut hp: i8, dmg: i8, arm: i8, mut hp_boss: i8, dmg_boss: i8, arm_b
     
 }
 
+fn print_type_of<T>(_: &T) {
+    println!("{}", std::any::type_name::<T>())
+}
+
 fn main() {
     //create shop
-    let shop_inventory = (
+    let  mut shop_inventory = (
         Armor (String::from("Sturdy Combat Armor"), 10),
         Weapon (String::from("Broadsider"), 11),
         Ring (String::from("Magic ring"), 6, 3)
         
     );
-    
+    //print_type_of(&shop_inventory.1);
     //create player
     let mut player1 = Player::new();
         
@@ -93,14 +100,19 @@ fn main() {
 
     //asking user for what items wants to buy
     //TODO: Put in a for cycle
-    let mut input_string = String::new();
-    
-    io::stdin()
-        .read_line(&mut input_string)
-        .expect("Failed to read line");
-        
-    let item_index: u8 = input_string.parse::<i8>().unwrap_or(-1);
 
+    let mut input_string = String::new();
+
+        io::stdin()
+            .read_line(&mut input_string)
+            .expect("Failed to read line");
+            
+        
+        let item_index: i32 = input_string.trim().parse().unwrap_or(-1);
+        
+    
+    
+    
     //add item with the index to player's inventory
     player1.player_inventory.add(shop_inventory.item_index);
 
